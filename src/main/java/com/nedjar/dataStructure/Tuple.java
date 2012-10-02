@@ -3,46 +3,44 @@ package com.nedjar.dataStructure;
 public class Tuple{
 	/**
 	 * 
-	 * Valeur du tuple. les attributs sont codé par des entier court la valeur 0
-	 * corespond aux ALL
+	 * Valeur du tuple. les attributs sont codé par des entier court. 
+	 * La valeur 0 corespond aux ALL
 	 * 
 	 */
-	private byte[]	val;
-	private byte	len;
+	private byte[]	valeurs;
 
 	public Tuple(byte taille) {
-		val = new byte[taille];
-		len = taille;
+		valeurs = new byte[taille];
 	}
 	
-	public byte size() {
-		return len;
+	public int size() {
+		return valeurs.length;
 	}
 
 	public void set(byte i, byte valeur) {
-		assert (i >= 0 && i < val.length);
+		assert (i >= 0 && i < valeurs.length);
 		assert (valeur >= 0);
-		val[i] = valeur;
+		valeurs[i] = valeur;
 	}
 
 	public byte get(byte i) {
-		assert (i >= 0 && i < val.length);
-		return val[i];
+		assert (i >= 0 && i < valeurs.length);
+		return valeurs[i];
 	}
 
 	public int hashCode() {
 		int h = 0;
-		for (int i = 0; i < len; i++) {
-			h = 31 * h + val[i];
+		for (int i = 0; i < valeurs.length; i++) {
+			h = 31 * h + valeurs[i];
 		}
 		return h;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuffer str = new StringBuffer(val.length*3);
-		for (int i = 0; i < val.length; i++) {
-			str.append(val[i]+" ");	
+		StringBuffer str = new StringBuffer(valeurs.length*3);
+		for (int i = 0; i < valeurs.length; i++) {
+			str.append(valeurs[i]+" ");	
 		}
 		return str.toString();
 	}
