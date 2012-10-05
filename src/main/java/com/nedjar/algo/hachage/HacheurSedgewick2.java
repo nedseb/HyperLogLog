@@ -5,7 +5,7 @@ import com.nedjar.dataStructure.Tuple;
 public class HacheurSedgewick2 implements Hacheur {
 
 	@Override
-	public long hache(Tuple key) {
+	public int hache(Tuple key) {
 		int h = 0;
 		int a = 31415;
 		final int b = 27183;

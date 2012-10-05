@@ -5,7 +5,7 @@ import com.nedjar.dataStructure.Tuple;
 public class HacheurOAT  implements Hacheur {
 
 	@Override
-	public long hache(Tuple key) {
+	public int hache(Tuple key) {
 		long h = 0l;
 		for (byte i = 0; i < key.size(); i++) {
 			h += key.get(i);
@@ -17,6 +17,6 @@ public class HacheurOAT  implements Hacheur {
 		h ^= ( h >> 11 );
 		h += ( h << 15 );
 				
-		return h;
+		return (int)h;
 	}
 }

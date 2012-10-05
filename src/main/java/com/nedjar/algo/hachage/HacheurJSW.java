@@ -17,12 +17,12 @@ public class HacheurJSW implements Hacheur {
 			tab[i] = r.nextLong();
 	}
 	
-	public long hache(Tuple key) {
+	public int hache(Tuple key) {
 		long h = 16777551;
 
 		for (byte i = 0; i < key.size(); i++) {
 			h = ( h << 1 | h >> 31 ) + tab[tab2[key.get(i)]< 0 ?-tab2[key.get(i)] :tab2[key.get(i)]];
 		}
-		return h;
+		return (int)h;
 	}
 }

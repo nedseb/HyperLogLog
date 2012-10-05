@@ -5,7 +5,7 @@ import com.nedjar.dataStructure.Tuple;
 public class HacheurJava implements Hacheur {
 
 	@Override
-	public long hache(Tuple key) {
+	public int hache(Tuple key) {
 		return key.hashCode();
 	}
 }
