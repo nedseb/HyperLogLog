@@ -1,5 +1,7 @@
 package com.nedjar.dataStructure;
 
+import java.util.Arrays;
+
 public class Tuple{
 	/**
 	 * 
@@ -27,15 +29,25 @@ public class Tuple{
 		assert (i >= 0 && i < valeurs.length);
 		return valeurs[i];
 	}
-
-	public int hashCode() {
-		int h = 0;
-		for (int i = 0; i < valeurs.length; i++) {
-			h = 31 * h + valeurs[i];
-		}
-		return h;
-	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(valeurs);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		Tuple other = (Tuple) obj;
+		if (!Arrays.equals(valeurs, other.valeurs)) return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer str = new StringBuffer(valeurs.length*3);
