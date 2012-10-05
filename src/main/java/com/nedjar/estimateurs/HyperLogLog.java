@@ -6,7 +6,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.nedjar.algo.hachage.Hacheur;
+import com.nedjar.algo.hachage.HacheurBernstein;
+import com.nedjar.algo.hachage.HacheurFNV;
+import com.nedjar.algo.hachage.HacheurJSW;
 import com.nedjar.algo.hachage.HacheurJava;
+import com.nedjar.algo.hachage.HacheurOAT;
+import com.nedjar.algo.hachage.HacheurRot;
+import com.nedjar.algo.hachage.HacheurSDBM;
+import com.nedjar.algo.hachage.HacheurSax;
+import com.nedjar.algo.hachage.HacheurSedgewick;
+import com.nedjar.algo.hachage.HacheurSedgewick2;
 import com.nedjar.dataStructure.Tuple;
 
 public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
@@ -84,8 +93,8 @@ public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
 
     public static void main(String[] args) {
         ArrayList<Tuple> list = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
-            Tuple t = new Tuple(3);
+        for (int i = 0; i < 1000000; i++) {
+            Tuple t = new Tuple(10);
             for (int j = 0; j < t.size(); j++) {
                 t.set(j, (byte) (Byte.MAX_VALUE * Math.random()));
             }
@@ -99,22 +108,22 @@ public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
                 new HacheurJava(), 
                 //new HacheurAdd(), 
                 //new HacheurXOR(), 
-                //new HacheurRot(),
-                //new HacheurSax(), 
-                //new HacheurSDBM(), 
-                //new HacheurBernstein(), 
-                //new HacheurSedgewick(),
-                //new HacheurSedgewick2(), 
-                //new HacheurFNV(), 
-                //new HacheurOAT(), 
-                //new HacheurJSW()
+                new HacheurRot(),
+                new HacheurSax(), 
+                new HacheurSDBM(), 
+                new HacheurBernstein(), 
+                new HacheurSedgewick(),
+                new HacheurSedgewick2(), 
+                new HacheurFNV(), 
+                new HacheurOAT(), 
+                new HacheurJSW(),
                 };
         
         for (int i = 4; i < 16; i++) {
             for (Hacheur hacheur : hacheurs) {
                 HyperLogLog<ArrayList<Tuple>> hyp = new HyperLogLog<>(hacheur, i);
                 System.out.println("Cardinalité estimée avec b= " +i +" et " + hacheur.getClass().getName() + " :"
-                        + hyp.estimerCardinalite(list));
+                        + (int)hyp.estimerCardinalite(list));
             }
         }
     }
