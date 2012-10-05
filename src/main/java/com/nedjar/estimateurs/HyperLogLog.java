@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.nedjar.algo.hachage.Hacheur;
 import com.nedjar.algo.hachage.HacheurFNV;
@@ -30,23 +31,14 @@ public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
 		for (Tuple tupleCour : dataSet) {
 			long hashCour = hacheur.hache(tupleCour);
 			BitSet bits = BitSet.valueOf(new long[] { hashCour });
-			int index = recupererIndex(bits);			
-			registers[index] = Math.max(registers[index], positionPremierUn(bits));
+			BitSet indexBits = bits.get(0, b);
+			BitSet valueBits = bits.get(b, bits.size());
+			int index = (int) (indexBits.cardinality()== 0 ? 0 :indexBits.toLongArray()[0]);
+			registers[index] = Math.max(registers[index],
+					valueBits.nextClearBit(0));
 		}
 		double Z = indicator(registers);
 		return alpha * Math.pow(m, 2) * Z;
-	}
-
-	private int positionPremierUn(BitSet bits) {
-		BitSet valueBits = bits.get(b, bits.size());
-		return valueBits.nextSetBit(0);
-	}
-
-	private int recupererIndex(BitSet bits) {
-		BitSet indexBits = bits.get(0, b);
-		int index = (int) (indexBits.cardinality() == 0 ? 0 : indexBits
-				.toLongArray()[0]);
-		return index;
 	}
 
 	private double indicator(long[] registers) {
@@ -59,19 +51,19 @@ public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
 
 	public static void main(String[] args) {
 		ArrayList<Tuple> list = new ArrayList<>();
-		for (int i = 0; i < 100000; i++) {
-			Tuple t = new Tuple(3);
-			for (int j = 0; j < t.size(); j++) {
-				t.set(j, (byte) (20 * Math.random()));
+		for (int i = 0; i < 10000000; i++) {
+			Tuple t = new Tuple((byte) 5);
+			for (int j = 0; j < 5; j++) {
+				t.set(j, (byte) (Byte.MAX_VALUE * Math.random()));
 			}
 			list.add(t);
 		}
-		HyperLogLog<ArrayList<Tuple>> hyp = new HyperLogLog<>(new HacheurFNV(),10);
-		System.out.println("Cardinalité estimée :"
-				+ hyp.estimerCardinalite(list));
-		Set<Tuple> set = new HashSet<>(100000);
+		HyperLogLog<ArrayList<Tuple>> hyp = new HyperLogLog<>(new HacheurFNV(),
+				8);
+		System.out.println("Cardinalité estimée :" + hyp.estimerCardinalite(list));
+		Set<Tuple> set = new HashSet<>();
 		set.addAll(list);
 		System.out.println("Cardinalité réélle :" + set.size());
-
+		
 	}
 }
