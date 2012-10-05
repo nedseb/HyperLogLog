@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import com.nedjar.algo.hachage.Hacheur;
 import com.nedjar.algo.hachage.HacheurFNV;
+import com.nedjar.algo.hachage.HacheurJava;
 import com.nedjar.dataStructure.Tuple;
 
 public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
@@ -31,14 +31,41 @@ public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
 		for (Tuple tupleCour : dataSet) {
 			long hashCour = hacheur.hache(tupleCour);
 			BitSet bits = BitSet.valueOf(new long[] { hashCour });
-			BitSet indexBits = bits.get(0, b);
-			BitSet valueBits = bits.get(b, bits.size());
-			int index = (int) (indexBits.cardinality()== 0 ? 0 :indexBits.toLongArray()[0]);
+			int index = recupererIndex(bits);
 			registers[index] = Math.max(registers[index],
-					valueBits.nextClearBit(0));
+					positionPremierUn(bits));
 		}
 		double Z = indicator(registers);
-		return alpha * Math.pow(m, 2) * Z;
+		double E = alpha * Math.pow(m, 2) * Z;
+		if (E <= 2.5 * m) {
+			int nbRegistreDifferentDeZero = NbRegistreDifferentDeZero();
+			if (nbRegistreDifferentDeZero != 0) E = m
+					* Math.log(m / nbRegistreDifferentDeZero);
+		}
+		else if (E > 1 / 30d * Math.pow(2, 32)) {
+			E = Math.pow(-2, 32) * Math.log(1 - E / Math.pow(2, 32));
+		}
+		return E;
+	}
+
+	private int NbRegistreDifferentDeZero() {
+		int nbRegistreDifferentDeZero = 0;
+		for (int i = 0; i < registers.length; i++) {
+			if (registers[i] == 0) nbRegistreDifferentDeZero++;
+		}
+		return nbRegistreDifferentDeZero;
+	}
+
+	private int positionPremierUn(BitSet bits) {
+		BitSet valueBits = bits.get(b, bits.size());
+		return valueBits.nextSetBit(0);
+	}
+
+	private int recupererIndex(BitSet bits) {
+		BitSet indexBits = bits.get(0, b);
+		int index = (int) (indexBits.cardinality() == 0 ? 0 : indexBits
+				.toLongArray()[0]);
+		return index;
 	}
 
 	private double indicator(long[] registers) {
@@ -51,19 +78,20 @@ public class HyperLogLog<T extends Iterable<Tuple>> implements Estimateur<T> {
 
 	public static void main(String[] args) {
 		ArrayList<Tuple> list = new ArrayList<>();
-		for (int i = 0; i < 10000000; i++) {
-			Tuple t = new Tuple((byte) 5);
-			for (int j = 0; j < 5; j++) {
-				t.set(j, (byte) (Byte.MAX_VALUE * Math.random()));
+		for (int i = 0; i < 100000; i++) {
+			Tuple t = new Tuple(3);
+			for (int j = 0; j < t.size(); j++) {
+				t.set(j, (byte) (20 * Math.random()));
 			}
 			list.add(t);
 		}
-		HyperLogLog<ArrayList<Tuple>> hyp = new HyperLogLog<>(new HacheurFNV(),
-				8);
-		System.out.println("Cardinalité estimée :" + hyp.estimerCardinalite(list));
-		Set<Tuple> set = new HashSet<>();
+		HyperLogLog<ArrayList<Tuple>> hyp = new HyperLogLog<>(new HacheurJava(),
+				10);
+		System.out.println("Cardinalité estimée :"
+				+ hyp.estimerCardinalite(list));
+		Set<Tuple> set = new HashSet<>(100000);
 		set.addAll(list);
 		System.out.println("Cardinalité réélle :" + set.size());
-		
+
 	}
 }
