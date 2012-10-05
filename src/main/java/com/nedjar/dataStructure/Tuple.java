@@ -9,7 +9,7 @@ public class Tuple{
 	 */
 	private byte[]	valeurs;
 
-	public Tuple(byte taille) {
+	public Tuple(int taille) {
 		valeurs = new byte[taille];
 	}
 	
@@ -17,13 +17,13 @@ public class Tuple{
 		return valeurs.length;
 	}
 
-	public void set(byte i, byte valeur) {
+	public void set(int i, byte valeur) {
 		assert (i >= 0 && i < valeurs.length);
 		assert (valeur >= 0);
 		valeurs[i] = valeur;
 	}
 
-	public byte get(byte i) {
+	public byte get(int i) {
 		assert (i >= 0 && i < valeurs.length);
 		return valeurs[i];
 	}
